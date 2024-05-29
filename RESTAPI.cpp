@@ -6,7 +6,8 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 
-#include "src/util/urlparser.hpp"
+#include "src/util/UrlParser.hpp"
+#include "src/httpmapper/Mapper.hpp"
 
 using tcp = boost::asio::ip::tcp;
 namespace http = boost::beast::http;
@@ -14,8 +15,7 @@ namespace http = boost::beast::http;
 void handleRequest(http::request<http::string_body>& request, tcp::socket& socket);
 void runServer();
 
-int main()
-{
+int main() {
     try {
         runServer();
     }
@@ -40,16 +40,9 @@ void handleRequest(http::request<http::string_body>& request, tcp::socket& socke
 
     std::cout << tmp.first << " " << tmp.second << "\n";
 
-	http::response<http::string_body> response;
-	response.version(request.version());
-    response.result(http::status::ok);
-    response.set(http::field::server, "My HTTP Server");
-    response.set(http::field::content_type, "text/plain");
-    response.body() = "Hello, World!";
-    response.prepare_payload();
-
-    // Send the response to the client
-    boost::beast::http::write(socket, response);
+    Mapper& mapper = Mapper::Instance();
+    IController& con = mapper.getController(tmp.first);
+    con.proceed("test", request, socket);
 }
 
 

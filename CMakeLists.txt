@@ -16,7 +16,7 @@ find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # 이 프로젝트의 실행 파일에 소스를 추가합니다.
-add_executable (RESTAPI "RESTAPI.cpp" )
+add_executable (RESTAPI "RESTAPI.cpp"  "src/httpmapper/Mapper.cpp" "src/user/controller/UserController.cpp")
 
 
 target_link_libraries(RESTAPI ${Boost_LIBRARIES})
